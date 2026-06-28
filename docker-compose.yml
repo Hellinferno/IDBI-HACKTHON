@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: wealthorb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  vector-db:
+    image: ankane/pgvector:v0.5.0 # Using pgvector for simplicity
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vectordb
+    ports:
+      - "5433:5432"
+    volumes:
+      - vector_data:/var/lib/postgresql/data
+
+  mock-bank-core:
+    image: node:20-alpine
+    working_dir: /app
+    command: npm run dev
+    volumes:
+      - ./infra/mock-bank-core:/app
+    ports:
+      - "4000:4000"
+
+volumes:
+  postgres_data:
+  redis_data:
+  vector_data:

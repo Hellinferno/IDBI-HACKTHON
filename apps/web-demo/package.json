@@ -1,0 +1,27 @@
+{
+  "name": "web-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WealthOrb web demo — 3D orb advisor (clickable judge demo)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub",
+    "test": "echo no tests"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.169.0",
+    "@react-three/fiber": "^8.17.10",
+    "@react-three/drei": "^9.114.0",
+    "@react-three/postprocessing": "^2.16.3"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8",
+    "@vitejs/plugin-react": "^4.3.2"
+  }
+}

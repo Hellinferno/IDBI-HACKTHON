@@ -1,0 +1,1 @@
+{ "name": "@wealthorb/config", "version": "0.1.0", "scripts": { "build": "echo config build stub", "lint": "echo config lint stub", "typecheck": "echo config typecheck stub", "gen": "echo config gen stub" } }

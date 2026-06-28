@@ -1,0 +1,17 @@
+{
+  "name": "reco-service",
+  "version": "0.1.0",
+  "description": "Recommendation engine - allocation, product match, idle-cash, tax, rebalance",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo build done",
+    "start": "node src/index.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0"
+  }
+}

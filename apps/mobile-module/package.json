@@ -1,0 +1,15 @@
+{
+  "name": "mobile-module",
+  "version": "0.1.0",
+  "description": "WealthOrb embedded module for bank mobile app",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "echo dev stub",
+    "build": "echo build done",
+    "start": "echo start stub",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {}
+}

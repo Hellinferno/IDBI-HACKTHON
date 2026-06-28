@@ -1,0 +1,18 @@
+{
+  "name": "orchestrator",
+  "version": "0.1.0",
+  "description": "Conversation orchestrator - intent routing, RAG, LLM, WSS streaming",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo build done",
+    "start": "node src/index.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0",
+    "@fastify/websocket": "^10.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@wealthorb/shared-types",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "echo shared-types lint stub",
+    "typecheck": "tsc --noEmit",
+    "gen": "echo shared-types gen stub"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

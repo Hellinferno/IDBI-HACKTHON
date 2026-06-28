@@ -1,0 +1,10 @@
+{
+  "name": "@wealthorb/api-contracts",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo api-contracts build stub",
+    "lint": "echo api-contracts lint stub",
+    "typecheck": "echo api-contracts typecheck stub",
+    "gen": "openapi-typescript openapi.yaml -o ../shared-types/api.ts"
+  }
+}

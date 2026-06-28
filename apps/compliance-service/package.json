@@ -1,0 +1,17 @@
+{
+  "name": "compliance-service",
+  "version": "0.1.0",
+  "description": "Compliance - suitability gate, audit log, consent, nudge engine",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo build done",
+    "start": "node src/index.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0"
+  }
+}

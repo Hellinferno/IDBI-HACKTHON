@@ -1,0 +1,12 @@
+{
+  "name": "mock-bank-core",
+  "version": "0.1.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node --test server.test.js"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0"
+  }
+}

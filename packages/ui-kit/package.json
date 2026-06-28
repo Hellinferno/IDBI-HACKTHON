@@ -1,0 +1,11 @@
+{
+  "name": "@wealthorb/ui-kit",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "echo ui-kit build (no-op, plain JS)",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo ui-kit lint stub",
+    "typecheck": "echo ui-kit typecheck (no-op, plain JS)"
+  }
+}

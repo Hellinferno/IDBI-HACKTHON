@@ -1,0 +1,13 @@
+{
+  "name": "@wealthorb/orb-core",
+  "version": "0.1.0",
+  "description": "3D Orb renderer core - shaders, state mapping, audio pipeline",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "echo build done",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {}
+}

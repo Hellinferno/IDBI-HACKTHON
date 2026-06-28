@@ -1,0 +1,88 @@
+const CORPUS = [
+  {
+    id: 'doc-1',
+    title: 'SIP Investment Guide',
+    content: 'A Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly in mutual funds. SIPs benefit from rupee cost averaging and are ideal for long-term wealth creation. Starting with as little as ₹500 per month, SIPs reduce the impact of market volatility.',
+    category: 'product',
+    tags: ['sip', 'mutual_fund', 'investment', 'rupee_cost_averaging'],
+  },
+  {
+    id: 'doc-2',
+    title: 'Section 80C Tax Benefits',
+    content: 'Under Section 80C of the Income Tax Act, you can claim deductions up to ₹1,50,000 per year on investments in ELSS, PPF, NSC, and other qualifying instruments. ELSS funds have the shortest lock-in period of 3 years among 80C options.',
+    category: 'regulatory',
+    tags: ['tax', '80c', 'elss', 'deduction', 'ppf', 'nsc'],
+  },
+  {
+    id: 'doc-3',
+    title: 'Emergency Fund Recommendations',
+    content: 'Financial experts recommend maintaining an emergency fund of 6-12 months of essential expenses in liquid funds or high-yield savings accounts. This fund should be easily accessible and not subject to market risk.',
+    category: 'product',
+    tags: ['emergency', 'liquid_fund', 'savings', 'safety'],
+  },
+  {
+    id: 'doc-4',
+    title: 'Risk Assessment Methodology',
+    content: 'Risk profiling considers age, income, investment horizon, risk tolerance, and financial goals. Scores range from 0-100, mapped to conservative, moderate, or aggressive bands. Risk assessment should be retaken annually or after major life changes.',
+    category: 'regulatory',
+    tags: ['risk', 'assessment', 'profiling', 'conservative', 'moderate', 'aggressive'],
+  },
+  {
+    id: 'doc-5',
+    title: 'Asset Allocation by Risk Profile',
+    content: 'Conservative: 20% equity, 60% debt, 20% cash. Moderate: 50% equity, 35% debt, 15% cash. Aggressive: 75% equity, 20% debt, 5% cash. Allocation should be rebalanced quarterly or when drift exceeds 5%.',
+    category: 'product',
+    tags: ['allocation', 'risk', 'equity', 'debt', 'rebalancing'],
+  },
+  {
+    id: 'doc-6',
+    title: 'Goal-Based Investing',
+    content: 'Goal-based investing aligns your investment strategy with specific financial objectives like retirement, education, or home purchase. Each goal has its own timeline and risk profile. Use the goal planner to calculate required monthly contributions.',
+    category: 'product',
+    tags: ['goal', 'planning', 'retirement', 'education', 'home'],
+  },
+  {
+    id: 'doc-7',
+    title: 'KYC Requirements',
+    content: 'Know Your Customer (KYC) is mandatory for all financial transactions. PAN, Aadhaar, and address proof are required for KYC verification. KYC must be completed before investing in any mutual fund or financial product.',
+    category: 'regulatory',
+    tags: ['kyc', 'compliance', 'verification', 'pan', 'aadhaar'],
+  },
+  {
+    id: 'doc-8',
+    title: 'Mutual Fund Risk Categories',
+    content: 'Mutual funds are categorized by SEBI into low, moderate, and high risk based on their underlying assets and investment strategy. Equity funds carry higher risk but potential for higher returns. Debt funds are generally lower risk.',
+    category: 'regulatory',
+    tags: ['mutual_fund', 'risk', 'sebi', 'classification', 'equity_fund', 'debt_fund'],
+  },
+  {
+    id: 'doc-9',
+    title: 'XIRR and CAGR explained',
+    content: 'XIRR (Extended Internal Rate of Return) measures returns on irregular cash flows like SIPs. CAGR (Compound Annual Growth Rate) measures returns on lumpsum investments over a period. Both are expressed as annualized percentages.',
+    category: 'product',
+    tags: ['xirr', 'cagr', 'returns', 'performance', 'annualized'],
+  },
+  {
+    id: 'doc-10',
+    title: 'Idle Cash Optimization',
+    content: 'Cash lying idle in savings accounts earns only 3-4% interest. Consider moving surplus to liquid funds (6-7% returns) or ultra-short-duration funds for better returns while maintaining liquidity. Keep 2-3 months expenses in savings, move the rest.',
+    category: 'product',
+    tags: ['idle_cash', 'liquid_fund', 'savings', 'optimization', 'surplus'],
+  },
+  {
+    id: 'doc-11',
+    title: 'Rebalancing Strategy',
+    content: 'Portfolio rebalancing brings your asset allocation back to target when market movements cause drift. Sell overperforming assets and buy underperforming ones to maintain your risk profile. Rebalance quarterly or when drift exceeds 5%.',
+    category: 'product',
+    tags: ['rebalancing', 'portfolio', 'drift', 'allocation', 'strategy'],
+  },
+  {
+    id: 'doc-12',
+    title: 'Inflation Impact on Goals',
+    content: 'Inflation erodes purchasing power over time. A goal of ₹50 lakh today may require ₹1 crore in 10 years at 7% inflation. Always plan goals with inflation adjustment. The goal planner accounts for inflation automatically.',
+    category: 'product',
+    tags: ['inflation', 'goals', 'purchasing_power', 'planning'],
+  },
+];
+
+module.exports = { CORPUS };

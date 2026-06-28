@@ -1,0 +1,1 @@
+{ "name": "computation-engine", "version": "0.1.0", "private": true, "scripts": { "test": "python -m pytest tests/ -v" } }

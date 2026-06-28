@@ -1,0 +1,113 @@
+asyncapi: 2.6.0
+info:
+  title: WealthOrb WebSocket API
+  version: 1.0.0
+  description: Bidirectional streaming for conversation events
+
+servers:
+  production:
+    url: wss://api.wealthorb.idbi.com/stream
+    protocol: wss
+
+channels:
+  stream:
+    description: Conversation event stream
+    parameters:
+      token:
+        description: JWT authentication token
+        schema:
+          type: string
+    messages:
+      userMessage:
+        summary: User text message
+        payload:
+          type: object
+          required: [type, text]
+          properties:
+            type:
+              type: string
+              enum: [user_message]
+            text:
+              type: string
+      userAudio:
+        summary: User audio chunk
+        payload:
+          type: object
+          required: [type, chunk, final]
+          properties:
+            type:
+              type: string
+              enum: [user_audio]
+            chunk:
+              type: string
+              description: Base64 encoded PCM audio
+            final:
+              type: boolean
+      avatarState:
+        summary: Avatar state change
+        payload:
+          type: object
+          required: [type, state]
+          properties:
+            type:
+              type: string
+              enum: [avatar_state]
+            state:
+              type: string
+              enum: [idle, listening, thinking, speaking, alert, celebrate]
+            mood:
+              type: string
+      token:
+        summary: Streaming text token
+        payload:
+          type: object
+          required: [type, text]
+          properties:
+            type:
+              type: string
+              enum: [token]
+            text:
+              type: string
+      card:
+        summary: Interactive card
+        payload:
+          type: object
+          required: [type, card]
+          properties:
+            type:
+              type: string
+              enum: [card]
+            card:
+              type: object
+              required: [kind, data]
+              properties:
+                kind:
+                  type: string
+                  enum: [nudge, recommendation, goal, chart, explainer, insight]
+                data:
+                  type: object
+      ttsAudio:
+        summary: Text-to-speech audio chunk
+        payload:
+          type: object
+          required: [type, chunk, final]
+          properties:
+            type:
+              type: string
+              enum: [tts_audio]
+            chunk:
+              type: string
+              description: Base64 encoded audio
+            final:
+              type: boolean
+      done:
+        summary: Conversation turn complete
+        payload:
+          type: object
+          required: [type, messageId]
+          properties:
+            type:
+              type: string
+              enum: [done]
+            messageId:
+              type: string

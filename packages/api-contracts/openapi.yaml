@@ -1,0 +1,719 @@
+openapi: 3.0.0
+info:
+  title: WealthOrb API
+  version: 1.0.0
+  description: AI-powered financial advisor API for IDBI Bank
+servers:
+  - url: /api/v1
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Money:
+      type: string
+      description: String decimal to avoid float drift (e.g. "12500.00")
+
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        customerRef:
+          type: string
+        locale:
+          type: string
+
+    FinancialProfile:
+      type: object
+      properties:
+        monthlyIncome:
+          $ref: '#/components/schemas/Money'
+        monthlySurplus:
+          $ref: '#/components/schemas/Money'
+        savingsRate:
+          type: string
+        spendPersonality:
+          type: string
+          enum: [saver, balanced, spender, drifter]
+        lifeStage:
+          type: string
+
+    Risk:
+      type: object
+      properties:
+        score:
+          type: integer
+        band:
+          type: string
+          enum: [conservative, moderate, aggressive]
+        validUntil:
+          type: string
+          format: date
+
+    ProfileResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        financialProfile:
+          $ref: '#/components/schemas/FinancialProfile'
+        risk:
+          $ref: '#/components/schemas/Risk'
+
+    RiskAssessmentRequest:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [qid, value]
+            properties:
+              qid:
+                type: string
+              value:
+                type: integer
+
+    RiskAssessmentResponse:
+      type: object
+      properties:
+        score:
+          type: integer
+        band:
+          type: string
+        validUntil:
+          type: string
+
+    Goal:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+        goalType:
+          type: string
+          enum: [retirement, home, education, emergency, custom]
+        targetAmount:
+          $ref: '#/components/schemas/Money'
+        targetDate:
+          type: string
+          format: date
+        inflationRate:
+          type: string
+        priority:
+          type: integer
+        status:
+          type: string
+          enum: [active, met, paused]
+
+    GoalProjection:
+      type: object
+      properties:
+        goalId:
+          type: string
+        requiredCorpus:
+          $ref: '#/components/schemas/Money'
+        monthlyContribution:
+          $ref: '#/components/schemas/Money'
+        projectedCorpus:
+          $ref: '#/components/schemas/Money'
+        gap:
+          $ref: '#/components/schemas/Money'
+        assumptions:
+          type: object
+          properties:
+            inflation:
+              type: string
+            expectedReturn:
+              type: string
+
+    GoalCreateRequest:
+      type: object
+      required: [name, goalType, targetAmount, targetDate, priority]
+      properties:
+        name:
+          type: string
+        goalType:
+          type: string
+        targetAmount:
+          $ref: '#/components/schemas/Money'
+        targetDate:
+          type: string
+          format: date
+        priority:
+          type: integer
+
+    GoalSimulateRequest:
+      type: object
+      properties:
+        targetDate:
+          type: string
+          format: date
+        monthlyContribution:
+          $ref: '#/components/schemas/Money'
+
+    GoalResponse:
+      type: object
+      properties:
+        goal:
+          $ref: '#/components/schemas/Goal'
+        projection:
+          $ref: '#/components/schemas/GoalProjection'
+
+    Recommendation:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [allocation, product, idle_cash, tax, rebalance]
+        payload:
+          type: object
+        rationale:
+          type: string
+        suitability:
+          type: string
+        disclaimer:
+          type: string
+        computationInputs:
+          type: object
+
+    RecommendationListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+
+    RecommendationActionRequest:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [accept, dismiss]
+
+    RecommendationActionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        auditId:
+          type: string
+
+    ConversationResponse:
+      type: object
+      properties:
+        conversationId:
+          type: string
+        wsUrl:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        conversationId:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        avatarState:
+          type: string
+        tokens:
+          type: integer
+        createdAt:
+          type: string
+
+    Nudge:
+      type: object
+      properties:
+        id:
+          type: string
+        trigger:
+          type: string
+        payload:
+          type: object
+        priority:
+          type: integer
+        state:
+          type: string
+
+    Consent:
+      type: object
+      properties:
+        id:
+          type: string
+        scope:
+          type: string
+          enum: [data_read, advisory, notifications]
+        granted:
+          type: boolean
+        grantedAt:
+          type: string
+        revokedAt:
+          type: string
+
+    ConsentRequest:
+      type: object
+      required: [scope, granted]
+      properties:
+        scope:
+          type: string
+          enum: [data_read, advisory, notifications]
+        granted:
+          type: boolean
+
+    AvatarState:
+      type: object
+      properties:
+        key:
+          type: string
+        colorHint:
+          type: string
+        motionProfile:
+          type: string
+
+    SpendingCategory:
+      type: object
+      properties:
+        category:
+          type: string
+        amount:
+          $ref: '#/components/schemas/Money'
+        discretionary:
+          type: boolean
+
+    SpendingInsight:
+      type: object
+      properties:
+        period:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpendingCategory'
+        idleCash:
+          type: object
+          properties:
+            amount:
+              $ref: '#/components/schemas/Money'
+            suggestedAction:
+              type: string
+
+    UserMessage:
+      type: object
+      required: [type, text]
+      properties:
+        type:
+          type: string
+          enum: [user_message]
+        text:
+          type: string
+
+    UserAudio:
+      type: object
+      required: [type, chunk, final]
+      properties:
+        type:
+          type: string
+          enum: [user_audio]
+        chunk:
+          type: string
+        final:
+          type: boolean
+
+    ServerEvent:
+      oneOf:
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [avatar_state]
+            state:
+              type: string
+            mood:
+              type: string
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [token]
+            text:
+              type: string
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [card]
+            card:
+              type: object
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [tts_audio]
+            chunk:
+              type: string
+            final:
+              type: boolean
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [done]
+            messageId:
+              type: string
+
+security:
+  - bearerAuth: []
+
+paths:
+  /profile:
+    get:
+      summary: Get user profile
+      operationId: getProfile
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Missing userId
+        '404':
+          description: User not found
+
+  /profile/risk-assessment:
+    post:
+      summary: Submit risk assessment answers
+      operationId: submitRiskAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskAssessmentRequest'
+      responses:
+        '200':
+          description: Risk assessment computed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentResponse'
+        '400':
+          description: Invalid request
+
+  /profile/ingest:
+    post:
+      summary: Ingest transactions and build profile
+      operationId: ingestProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerRef]
+              properties:
+                customerRef:
+                  type: string
+      responses:
+        '200':
+          description: Profile built
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Missing customerRef
+
+  /insights/spending:
+    get:
+      summary: Get spending insights
+      operationId: getSpendingInsights
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            default: last_3m
+      responses:
+        '200':
+          description: Spending insights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpendingInsight'
+
+  /goals:
+    post:
+      summary: Create a financial goal
+      operationId: createGoal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalCreateRequest'
+      responses:
+        '201':
+          description: Goal created with projection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalResponse'
+        '400':
+          description: Invalid goal data
+
+  /goals/{goalId}/projection:
+    get:
+      summary: Get goal projection
+      operationId: getGoalProjection
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Goal projection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalProjection'
+        '404':
+          description: Goal not found
+
+  /goals/{goalId}/simulate:
+    post:
+      summary: Simulate what-if scenario for a goal
+      operationId: simulateGoal
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalSimulateRequest'
+      responses:
+        '200':
+          description: Recomputed projection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalProjection'
+        '404':
+          description: Goal not found
+
+  /recommendations:
+    get:
+      summary: Get recommendations for user
+      operationId: getRecommendations
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recommendations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationListResponse'
+
+  /recommendations/{recommendationId}/action:
+    post:
+      summary: Accept or dismiss a recommendation
+      operationId: recommendationAction
+      parameters:
+        - name: recommendationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationActionRequest'
+      responses:
+        '200':
+          description: Action recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationActionResponse'
+
+  /conversations:
+    post:
+      summary: Start a new conversation
+      operationId: createConversation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channel:
+                  type: string
+                  enum: [text, voice]
+      responses:
+        '201':
+          description: Conversation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationResponse'
+
+  /conversations/{conversationId}/messages:
+    get:
+      summary: Get messages in a conversation
+      operationId: getMessages
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+
+  /nudges:
+    get:
+      summary: Get pending nudges
+      operationId: getNudges
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pending nudges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nudge'
+
+  /nudges/{nudgeId}/dismiss:
+    post:
+      summary: Dismiss a nudge
+      operationId: dismissNudge
+      parameters:
+        - name: nudgeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nudge dismissed
+
+  /consents:
+    get:
+      summary: Get user consents
+      operationId: getConsents
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User consents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Consent'
+
+    put:
+      summary: Update consent
+      operationId: updateConsent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRequest'
+      responses:
+        '200':
+          description: Consent updated
+
+  /avatar/states:
+    get:
+      summary: Get avatar state catalog
+      operationId: getAvatarStates
+      responses:
+        '200':
+          description: Avatar states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvatarState'
+
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      security: []
+      responses:
+        '200':
+          description: Service healthy

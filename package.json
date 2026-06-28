@@ -1,0 +1,16 @@
+{
+    "private":  true,
+    "devDependencies":  {
+                            "turbo":  "^1.10.16"
+                        },
+    "name":  "wealthorb-monorepo",
+    "packageManager":  "pnpm@9.0.0",
+    "scripts":  {
+                    "lint":  "turbo run lint",
+                    "build":  "turbo run build",
+                    "typecheck":  "turbo run typecheck",
+                    "test":  "turbo run test",
+                    "gen":  "turbo run gen",
+                    "dev":  "turbo run dev"
+                }
+}

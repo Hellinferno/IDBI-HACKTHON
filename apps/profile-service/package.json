@@ -1,0 +1,19 @@
+{
+  "name": "profile-service",
+  "version": "0.1.0",
+  "description": "Data ingestion, categorization, profiling, and risk assessment service",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo build done",
+    "start": "node src/index.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo lint stub",
+    "typecheck": "echo typecheck stub"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {}
+}
