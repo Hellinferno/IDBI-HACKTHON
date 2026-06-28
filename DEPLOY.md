@@ -1,80 +1,69 @@
-# Deploying WealthOrb on Railway
+# Deploying WealthOrb (Vercel + Render)
 
-Three services, one Railway project:
+- **Frontend (the clickable judge link)** → **Vercel** — fast, never sleeps.
+- **Engine + Orchestrator (backends)** → **Render** free tier — Docker, from your repo.
 
-| Service | Root directory | Public? | Purpose |
-|---|---|---|---|
-| `engine` | `apps/computation-engine` | yes | Deterministic math (FastAPI) |
-| `orchestrator` | `apps/orchestrator` | yes | Conversation + engine + Gemini |
-| `web` | `apps/web-demo` | yes | 3D orb UI — **this is the link judges open** |
-
-Each has a `Dockerfile` + `railway.json` already, so Railway builds them with no guesswork.
+Repo: <https://github.com/Hellinferno/IDBI-HACKTHON>. Your Gemini key is in
+`apps/orchestrator/.env`, which is gitignored — it is NOT on GitHub. You'll paste it into
+the Render dashboard instead.
 
 ---
 
-## 0. Prerequisites
-- A [Railway](https://railway.app) account (Hobby plan is fine for a demo).
-- A GitHub account (Railway deploys from a repo).
-- Your Gemini API key (already in `apps/orchestrator/.env`, which is **gitignored** — it will NOT be pushed).
+## Part 1 — Backends on Render
 
-## 1. Push the code to GitHub
-The repo isn't initialized yet. From the project root:
+### Option A (fastest): Blueprint
+1. [Render](https://render.com) → **New → Blueprint** → connect the repo → it reads
+   `render.yaml` and creates **wealthorb-engine** and **wealthorb-orchestrator**.
+2. Deploy the **engine** first. Copy its URL, e.g. `https://wealthorb-engine.onrender.com`.
+3. On **wealthorb-orchestrator** → Environment, set:
+   - `GEMINI_API_KEY` = your key
+   - `COMPUTATION_ENGINE_URL` = the engine URL from step 2 (no trailing slash)
+   - (`GEMINI_MODEL` and `CORS_ORIGIN` are already set by the blueprint)
+4. **Manual Deploy → Deploy latest commit** on the orchestrator so it picks up the URL.
 
-```bash
-git init
-git add .
-git commit -m "WealthOrb demo"
-git branch -M main
-git remote add origin https://github.com/<you>/wealthorb.git
-git push -u origin main
-```
+### Option B (manual, if the blueprint hiccups)
+Create two services by hand: **New → Web Service** → connect repo → for each set:
+| Field | engine | orchestrator |
+|---|---|---|
+| Root Directory | `apps/computation-engine` | `apps/orchestrator` |
+| Runtime | Docker (auto-detected) | Docker (auto-detected) |
+| Instance Type | Free | Free |
+| Health Check Path | `/health` | `/health` |
 
-Double-check `apps/orchestrator/.env` is **not** in the commit (the root `.gitignore` excludes it):
-```bash
-git ls-files | grep ".env"   # should show only .env.example files
-```
+Then on the orchestrator add env vars: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-2.5-flash`,
+`COMPUTATION_ENGINE_URL=<engine url>`, `CORS_ORIGIN=*`.
 
-## 2. Create the project + 3 services
-1. Railway → **New Project** → **Deploy from GitHub repo** → pick the repo.
-2. That creates one service. Open it → **Settings → Root Directory** → set to `apps/computation-engine`. Rename the service to **engine**.
-3. **Settings → Networking → Generate Domain** (gives a public `https://engine-xxxx.up.railway.app`).
-4. **+ New** → **GitHub Repo** (same repo) → root directory `apps/orchestrator`, name **orchestrator**, Generate Domain.
-5. **+ New** → same repo → root directory `apps/web-demo`, name **web**, Generate Domain.
-
-## 3. Set environment variables
-**engine** — none required (it just needs `$PORT`, which Railway provides).
-
-**orchestrator** — Variables tab:
-```
-GEMINI_API_KEY        = <your key>
-GEMINI_MODEL          = gemini-2.5-flash
-COMPUTATION_ENGINE_URL= https://engine-xxxx.up.railway.app   ← engine's public URL (no trailing slash)
-CORS_ORIGIN           = *
-```
-
-**web** — Variables tab (this is read at BUILD time):
-```
-VITE_API_BASE = https://orchestrator-xxxx.up.railway.app     ← orchestrator's public URL (no /api, no trailing slash)
-```
-
-## 4. Deploy order
-Set the URLs above, then redeploy in this order so each has what it needs:
-1. **engine** (deploys on its own)
-2. **orchestrator** (needs `COMPUTATION_ENGINE_URL`)
-3. **web** — **Redeploy after setting `VITE_API_BASE`** (it's baked into the build; a deploy from before the variable was set won't have it).
-
-## 5. Verify
-- `https://engine-xxxx.up.railway.app/health` → `{"status":"ok"}`
-- `https://orchestrator-xxxx.up.railway.app/health` → `{"status":"ok","service":"orchestrator"}`
-- Open the **web** domain → ask "Can I afford a ₹20 lakh car in 3 years?" → orb animates, engine-verified card appears.
-
-**The web domain is the clickable link you give the judges.**
+### Verify backends
+- `https://wealthorb-engine.onrender.com/health` → `{"status":"ok"}`
+- `https://wealthorb-orchestrator.onrender.com/health` → `{"status":"ok","service":"orchestrator"}`
 
 ---
 
-## Notes & gotchas
-- **`VITE_API_BASE` is build-time.** If the deployed UI can't reach the backend, confirm the variable is set on the **web** service and **redeploy** it.
-- **CORS**: handled by the orchestrator (`CORS_ORIGIN=*`). Tighten to the web domain after the demo if you like.
-- **Gemini fallback**: if the key is missing or rate-limited, the orchestrator auto-falls back to deterministic phrasing — the demo still works.
-- **Private networking (optional)**: instead of the engine's public URL you can use `COMPUTATION_ENGINE_URL=http://${{engine.RAILWAY_PRIVATE_DOMAIN}}:${{engine.PORT}}` and leave the engine private. Public is simpler for a demo.
-- **CLI alternative**: `npm i -g @railway/cli`, `railway login`, then per service `railway up` from each app directory with the service linked. The GitHub flow above is easier for a monorepo.
+## Part 2 — Frontend on Vercel
+1. [Vercel](https://vercel.com) → **Add New → Project** → import the repo.
+2. **Root Directory → `apps/web-demo`** (click Edit, pick the folder). Framework auto-detects
+   as **Vite** (the included `vercel.json` forces an `npm` build).
+3. **Environment Variables** → add:
+   - `VITE_API_BASE` = your orchestrator URL, e.g. `https://wealthorb-orchestrator.onrender.com`
+     (no `/api`, no trailing slash)
+4. **Deploy.** Your Vercel URL (e.g. `https://idbi-hackthon.vercel.app`) is the **link you
+   give the judges**.
+
+> `VITE_API_BASE` is baked in at build time. If you change it later, **redeploy** on Vercel.
+
+---
+
+## Order of operations
+1. Render: deploy **engine** → get its URL.
+2. Render: set the orchestrator's `COMPUTATION_ENGINE_URL` + `GEMINI_API_KEY` → deploy it → get its URL.
+3. Vercel: set `VITE_API_BASE` to the orchestrator URL → deploy.
+4. Open the Vercel link → ask "Can I afford a ₹20 lakh car in 3 years?".
+
+## Demo-day gotcha: cold starts
+Render free services **sleep after ~15 min idle** (~50s first wake). Before you present,
+open the two `/health` URLs once to warm them. The orchestrator also falls back to
+deterministic phrasing if Gemini is slow, so the demo still works either way.
+
+## CORS
+Handled by the orchestrator (`CORS_ORIGIN=*`). After the demo you can tighten it to your
+Vercel domain.

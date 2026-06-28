@@ -1,0 +1,32 @@
+# Render Blueprint — deploys the two backends (the frontend goes to Vercel).
+# Render → New → Blueprint → pick this repo. Then set the two `sync: false`
+# variables (GEMINI_API_KEY, COMPUTATION_ENGINE_URL) in the dashboard.
+services:
+  # ── Computation engine (Python / FastAPI) ──
+  - type: web
+    name: wealthorb-engine
+    runtime: docker
+    rootDir: apps/computation-engine
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore # closest Render region to India
+    healthCheckPath: /health
+
+  # ── Orchestrator (Node / Fastify) ──
+  - type: web
+    name: wealthorb-orchestrator
+    runtime: docker
+    rootDir: apps/orchestrator
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # set in dashboard (secret)
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: COMPUTATION_ENGINE_URL
+        sync: false # set to the engine's https URL after it deploys
+      - key: CORS_ORIGIN
+        value: "*"
