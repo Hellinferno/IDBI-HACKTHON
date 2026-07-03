@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "main": "src/index.js",
   "scripts": {
-    "build": "echo rag-corpus build (no-op, plain JS)",
+    "build": "echo \"rag-corpus build (no-op, plain JS)\"",
     "test": "node --test src/**/*.test.js",
     "lint": "echo rag-corpus lint stub",
-    "typecheck": "echo rag-corpus typecheck (no-op, plain JS)"
+    "typecheck": "echo \"rag-corpus typecheck (no-op, plain JS)\""
   }
 }
